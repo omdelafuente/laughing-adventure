@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +56,7 @@ public class PageController {
 		
 		Usr user = new Usr();
 		
-		String url = "http://localhost:11502/users";
+		String url = "http://localhost:11502/user";
 		String email = params.get("email");
 		String name = params.get("name");
 		String surname = params.get("surname");
@@ -108,6 +110,41 @@ public class PageController {
 		}
 	}
 	
+	@RequestMapping("/login")
+	public String login(Model model, @RequestParam Map<String, String> params, HttpSession session){
 	
-	
+		Usr user = new Usr();
+		String url = "http://localhost:11502/userCredential";
+		
+		user.setEmail(params.get("email"));
+		user.setPassword(params.get("psw"));
+		
+		ResponseEntity<Usr> result = restTemplate.postForEntity(url, user, Usr.class);
+		
+		if(result.getStatusCode() == HttpStatus.OK){
+			model.addAttribute("loginSuccess", true);
+			session.setAttribute("loggedUser", result.getBody());
+			return "index.jsp";
+		}
+		else{
+
+			String errorLogin = null;
+			
+			if(result.getStatusCode() == HttpStatus.GONE){
+				errorLogin = "La cuenta especificada ha sido eliminada.";
+			}	
+			else if(result.getStatusCode() == HttpStatus.BAD_REQUEST){
+				errorLogin = "La contraseña introducida es incorrecta.";
+			}			
+			else if(result.getStatusCode() == HttpStatus.NOT_FOUND){
+				errorLogin = "No se encontró ninguna cuenta con ese e-mail, por favor regístrate si no lo has hecho o introduce una cuenta existente.";
+			}
+			
+			model.addAttribute("errorLogin", errorLogin);
+			model.addAttribute("loginSuccess", false);
+			return "login.jsp";
+			
+		}
+		
+	}
 }

@@ -88,17 +88,11 @@ body, h1, h2, h3, h4, h5, h6, .w3-wide {
 				<%
 					if ((Boolean) request.getAttribute("loginSuccess") != null) {
 						if ((Boolean) request.getAttribute("loginSuccess") == false) {
-							ArrayList<String> errList = (ArrayList<String>) request.getAttribute("errorLogin");
+							String error = (String) request.getAttribute("errorLogin");
 				%>
 
 				<div class="w3-panel w3-red w3-card-4">
-					<%
-						for (int i = 0; i < errList.size(); i++) {
-					%>
-					<p><%=errList.get(i)%></p>
-					<%
-						}
-					%>
+					<p><%=error%></p>
 				</div>
 				<%
 					}
