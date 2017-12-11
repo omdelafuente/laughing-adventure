@@ -1,10 +1,14 @@
 package es.uc3m.tiw.domains;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import es.uc3m.tiw.domains.Event;
 
 @Entity
 @Table(name="USR")
@@ -17,7 +21,10 @@ public class Usr implements Serializable{
 	private String password;
 	@Id private String email;
 	private boolean isActive = true;
-	
+	//bi-directional many-to-one association to Event
+	@OneToMany(mappedBy="creator")
+	private List<Event> events;
+		
 	public Usr(String name, String surname, String password, String email, boolean isActive) {
 		this.name = name;
 		this.surname = surname;
@@ -61,6 +68,10 @@ public class Usr implements Serializable{
 
 	public void setIsActive(boolean isActive) {
 		this.isActive = isActive;
+	}
+	
+	public List<Event> getEvents(){
+		return events;
 	}
 
 }

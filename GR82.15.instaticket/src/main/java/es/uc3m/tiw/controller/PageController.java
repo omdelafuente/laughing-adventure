@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpResponse;
@@ -266,5 +267,25 @@ public class PageController {
 		session.invalidate();
 		return "index.jsp";
 		
+	}
+	
+	@RequestMapping("/dropOut")
+	public String dropOut(Model model, HttpSession session){
+		
+		Usr user = (Usr) session.getAttribute("loggedUser");
+		
+		String url = "http://localhost:11502/user/{email}";
+	
+		ResponseEntity<Usr> result = restTemplate.exchange(url, HttpMethod.DELETE, null, Usr.class, user.getEmail());
+		
+		if(result.getStatusCode() == HttpStatus.OK){
+			model.addAttribute("dropOutSuccess", true);
+			session.invalidate();
+			return "index.jsp";
+		}
+		else {
+			model.addAttribute("dropOutSuccess", false);
+			return "editProfile.jsp";	
+		}
 	}
 }

@@ -3,18 +3,29 @@ package es.uc3m.tiw.domains;
 import java.io.Serializable;
 import java.util.List;
 
-public class Usr implements Serializable{
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
+import es.uc3m.tiw.domains.Event;
+
+@Entity
+@Table(name="USR")
+public class Usr implements Serializable{
+	
 	private static final long serialVersionUID = 1L;
 	
 	private String name;
 	private String surname;
 	private String password;
-	private String email;
-	private boolean isActive;
-	
+	@Id private String email;
+	private boolean isActive = true;
+	//bi-directional many-to-one association to Event
+	@OneToMany(mappedBy="creator")
+	private List<Event> events;
+		
 	public Usr(String name, String surname, String password, String email, boolean isActive) {
-		super();
 		this.name = name;
 		this.surname = surname;
 		this.password = password;
@@ -23,7 +34,7 @@ public class Usr implements Serializable{
 	}
 	
 	public Usr() {
-		super();
+		
 	}
 	
 	public String getName() {
@@ -58,5 +69,8 @@ public class Usr implements Serializable{
 	public void setIsActive(boolean isActive) {
 		this.isActive = isActive;
 	}
-	
+	public List<Event> getEvents() {
+		return this.events;
+	}
+
 }

@@ -1,5 +1,7 @@
 package es.uc3m.tiw.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,8 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import es.uc3m.tiw.domains.Usr;
-import es.uc3m.tiw.domains.UsrDAO;
+import es.uc3m.tiw.domains.*;
 
 @RestController
 @CrossOrigin
@@ -62,5 +63,40 @@ public class Controller {
 		user.setEmail(email);		
 		userDAO.save(user);
 	}
+	
+	@RequestMapping(value="/user/{email:.+}", method=RequestMethod.DELETE)
+	public ResponseEntity<Usr> deleteUser(@PathVariable String email){
+		
+		Usr user = userDAO.findByEmail(email);
+		
+		List<Event> events = user.getEvents();
+		
+		if(events == null){
+			user.setIsActive(false);
+			userDAO.save(user);
+			return new ResponseEntity<Usr>(user, HttpStatus.OK);
+		}
+		else {
+			boolean hasAvailableEvents = false;
+			
+			for(int i = 0; i < events.size(); i++){
+				if(events.get(i).getState().equals("Disponible")){
+					hasAvailableEvents = true;
+					break;
+				}
+			}
+			
+			if(hasAvailableEvents){
+				return new ResponseEntity<Usr>(user, HttpStatus.BAD_REQUEST);
+			}
+			else {				
+				user.setIsActive(false);
+				userDAO.save(user);
+				return new ResponseEntity<Usr>(user, HttpStatus.OK);
+			}
+		}
+	}
+	
+	
 
 }

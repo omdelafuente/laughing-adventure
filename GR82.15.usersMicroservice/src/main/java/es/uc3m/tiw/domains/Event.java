@@ -11,6 +11,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+
+
 @Entity
 @Table(name = "EVENT")
 public class Event implements Serializable{
@@ -21,6 +26,7 @@ public class Event implements Serializable{
 	private String category;
 	private byte[] image;
 	private BigDecimal price;
+	@JsonDeserialize(using=LocalDateDeserializer.class)
 	@Convert(converter = LocalDateTimeAttributeConverter.class)
 	private LocalDateTime eventDate;
 	private String place;

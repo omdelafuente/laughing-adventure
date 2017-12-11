@@ -99,7 +99,7 @@ body, h1, h2, h3, h4, h5, h6, .w3-wide {
 					}
 				%>
 
-				<p>Inica sesión en Instaticket:</p>
+				<p>Inicia sesión en Instaticket:</p>
 				<form method="post" action="login">
 					<p>Correo electrónico:</p>
 					<input class="w3-input w3-border w3-light-grey" style="width: 30%; display: inline-block" maxlength="30" type="email"
