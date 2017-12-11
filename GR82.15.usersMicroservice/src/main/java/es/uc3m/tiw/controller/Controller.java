@@ -56,5 +56,11 @@ public class Controller {
 			return new ResponseEntity<Usr>(user, HttpStatus.NOT_FOUND);
 		}
 	}
+	
+	@RequestMapping(value="/user/{email:.+}", method=RequestMethod.PUT)
+	public void editUser(@PathVariable String email, @RequestBody Usr user){
+		user.setEmail(email);		
+		userDAO.save(user);
+	}
 
 }

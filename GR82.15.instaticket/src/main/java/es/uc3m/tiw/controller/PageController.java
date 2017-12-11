@@ -145,6 +145,126 @@ public class PageController {
 			return "login.jsp";
 			
 		}
+	}
+	
+	@RequestMapping("/edit")
+	public String editProfile(Model model, @RequestParam Map<String, String> params, HttpSession session){
+		
+		String name = params.get("name");
+		String surname = params.get("surname");
+		String oldPassword = params.get("psw");
+		String newPassword = params.get("npsw");
+		String checkNewPassword = params.get("checknpsw");
+		
+		ArrayList<String> errorEdit = new ArrayList<String>();
+		boolean editSuccess = true;
+		
+		Usr user = (Usr) session.getAttribute("loggedUser");
+		Usr userToUpdate = new Usr();
+		userToUpdate.setEmail(user.getEmail());
+		userToUpdate.setIsActive(true);
+		
+		if(!name.isEmpty()){
+			
+			if(!name.equals(user.getName())){
+				if(!name.matches("^[\\p{Space}\\p{L}]+$")){
+					editSuccess = false;
+					errorEdit.add("El nombre solo puede contener letras.");
+				}
+				userToUpdate.setName(name);
+			}else{
+				userToUpdate.setName(user.getName());
+			}
+			
+		}else{
+			userToUpdate.setName(user.getName());
+		}
+		
+		if(!surname.isEmpty()){
+			if(!surname.equals(user.getSurname())){
+				if(!surname.matches("^[\\p{Space}\\p{L}]+$")){
+					editSuccess = false;
+					errorEdit.add("Los apellidos solo pueden contener letras.");
+				}
+				userToUpdate.setSurname(surname);
+			}else{
+				userToUpdate.setSurname(user.getSurname());
+			}
+		}else{
+			userToUpdate.setSurname(user.getSurname());
+		}
+		
+		if(!newPassword.isEmpty()) {
+			
+			if(checkNewPassword.isEmpty()){
+				
+				editSuccess = false;
+				errorEdit.add("Debes confirmar la nueva contraseña.");
+			}else {
+				
+				if(!newPassword.equals(checkNewPassword)){
+					editSuccess = false;
+					errorEdit.add("La nueva contraseña y su confirmación deben ser iguales.");
+				}
+				if(newPassword.equals(user.getPassword())){
+					editSuccess = false;
+					errorEdit.add("La nueva contraseña debe ser distinta a la antigua.");
+				}
+				if(newPassword.length() < 6){
+					
+					editSuccess = false;
+					errorEdit.add("La contraseña debe tener mínimo 6 números o letras.");
+					
+				}
+				userToUpdate.setPassword(newPassword);
+			}
+		}else{
+			userToUpdate.setPassword(user.getPassword());
+		}
+		
+		if(newPassword.isEmpty() && (name.isEmpty() || name.equals(user.getName())) && (surname.isEmpty() || surname.equals(user.getSurname()))){
+			editSuccess = false;
+			errorEdit.add("No hay ningún campo que modificar.");
+		}
+		
+		if(oldPassword.isEmpty()){
+			
+			editSuccess = false;
+			errorEdit.add("Debes introducir la contraseña actual para poder realizar cambios.");
+			
+		}else{
+			
+			if(!oldPassword.equals(user.getPassword())){
+				
+				editSuccess = false;
+				errorEdit.add("La contraseña actual no es correcta.");
+				
+			}
+			
+		}
+		
+		model.addAttribute("editSuccess", editSuccess);
+		
+		if(editSuccess){
+			
+			String url = "http://localhost:11502/user/{email}";
+			
+			restTemplate.put(url, userToUpdate, user.getEmail());
+			session.setAttribute("loggedUser", userToUpdate);
+			return "index.jsp";
+		}
+		else {
+			
+			model.addAttribute("errorEdit", errorEdit);
+			return "editProfile.jsp";
+		}
+	}
+	
+	@RequestMapping("/logOut")
+	public String logOut(HttpSession session){
+		
+		session.invalidate();
+		return "index.jsp";
 		
 	}
 }

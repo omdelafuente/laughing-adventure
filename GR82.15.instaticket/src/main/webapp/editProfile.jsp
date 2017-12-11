@@ -1,9 +1,9 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"
-	import="java.util.ArrayList, es.uc3m.tiw.model.Usr"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"
+	import="java.util.ArrayList, es.uc3m.tiw.domains.Usr"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link href="resources/css/w3.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="resources/css/fonts.css">
 <title>Editar perfil</title>
@@ -68,7 +68,7 @@ body, h1, h2, h3, h4, h5, h6, .w3-wide {
 					if ((Boolean) request.getAttribute("dropOutSuccess") == false) {
 			%>
 			<div class="w3-panel w3-red w3-card-4">
-				<p>No puedes darte de baja si has creado eventos y están disponibles.</p>
+				<p>No puedes darte de baja si has creado eventos y estÃ¡n disponibles.</p>
 			</div>
 			<%
 				}
@@ -87,14 +87,14 @@ body, h1, h2, h3, h4, h5, h6, .w3-wide {
 				<input class="w3-input w3-border w3-light-grey" style="width: 30%; display: inline-block" type="text" maxlength="30"
 					name="surname" value="<%=((Usr) request.getSession().getAttribute("loggedUser")).getSurname()%>" />
 				<br>
-				<p>Contraseña actual:</p>
+				<p>ContraseÃ±a actual:</p>
 				<input class="w3-input w3-border w3-light-grey" style="width: 30%; display: inline-block" type="password" name="psw" />
 				<br>
-				<p>Nueva contraseña:</p>
+				<p>Nueva contraseÃ±a:</p>
 				<input class="w3-input w3-border w3-light-grey" style="width: 30%; display: inline-block" type="password" maxlength="30"
-					name="npsw" placeholder="Mín. 6 num/letras" />
+					name="npsw" placeholder="MÃ­n. 6 num/letras" />
 				<br>
-				<p>Confirmación de la nueva contraseña:</p>
+				<p>ConfirmaciÃ³n de la nueva contraseÃ±a:</p>
 				<input class="w3-input w3-border w3-light-grey" style="width: 30%; display: inline-block" type="password"
 					name="checknpsw" />
 				<br>
@@ -118,9 +118,9 @@ body, h1, h2, h3, h4, h5, h6, .w3-wide {
 
 	<div id="confirmBox" class="w3-modal">
 		<div class="w3-modal-content w3-animate-opacity w3-center" style="padding: 16px">
-			<p>¿Estás seguro de que quieres cambiar estos datos?</p>
+			<p>Â¿EstÃ¡s seguro de que quieres cambiar estos datos?</p>
 			<div class="w3-row">
-				<button class="w3-button w3-theme w3-green w3-medium" type="submit" form="editForm">Sí</button>
+				<button class="w3-button w3-theme w3-green w3-medium" type="submit" form="editForm">SÃ­</button>
 				<button class="w3-button w3-theme w3-grey w3-medium" onclick="document.getElementById('confirmBox').style.display='none'">No</button>
 			</div>
 		</div>
@@ -128,9 +128,9 @@ body, h1, h2, h3, h4, h5, h6, .w3-wide {
 
 	<div id="confirmBox2" class="w3-modal">
 		<div class="w3-modal-content w3-animate-opacity w3-center" style="padding: 16px">
-			<p>¿Estás seguro de que quieres abandonarnos?</p>
+			<p>Â¿EstÃ¡s seguro de que quieres abandonarnos?</p>
 			<div class="w3-row">
-				<button class="w3-button w3-theme w3-grey w3-medium" type="submit" form="dropOutForm">Sí</button>
+				<button class="w3-button w3-theme w3-grey w3-medium" type="submit" form="dropOutForm">SÃ­</button>
 				<button class="w3-button w3-theme w3-grey w3-medium"
 					onclick="document.getElementById('confirmBox2').style.display='none'">No</button>
 			</div>
