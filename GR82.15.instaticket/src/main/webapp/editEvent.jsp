@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"
-	import="java.util.ArrayList, es.uc3m.tiw.model.Event, org.apache.commons.codec.binary.StringUtils, org.apache.commons.codec.binary.Base64"%>
+	import="java.util.ArrayList, es.uc3m.tiw.domains.Event, org.apache.commons.codec.binary.StringUtils, org.apache.commons.codec.binary.Base64"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>

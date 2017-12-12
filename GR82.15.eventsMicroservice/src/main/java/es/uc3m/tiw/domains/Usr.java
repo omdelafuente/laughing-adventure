@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import es.uc3m.tiw.domains.Event;
 
 @Entity
@@ -22,6 +24,7 @@ public class Usr implements Serializable{
 	@Id private String email;
 	private boolean isActive = true;
 	//bi-directional many-to-one association to Event
+	@JsonIgnore
 	@OneToMany(mappedBy="creator")
 	private List<Event> events;
 		

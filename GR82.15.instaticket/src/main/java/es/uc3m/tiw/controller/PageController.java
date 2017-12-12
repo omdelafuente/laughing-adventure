@@ -1,12 +1,21 @@
 package es.uc3m.tiw.controller;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +24,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import es.uc3m.tiw.domains.Usr;
+import es.uc3m.tiw.domains.*;
 
 @Controller
 public class PageController {
@@ -49,7 +59,7 @@ public class PageController {
 	@RequestMapping("/")
 	public String indexView(Model model){
 		
-		return "index.jsp";
+		return "index";
 	}
 
 	@RequestMapping("/register")
@@ -125,7 +135,7 @@ public class PageController {
 		if(result.getStatusCode() == HttpStatus.OK){
 			model.addAttribute("loginSuccess", true);
 			session.setAttribute("loggedUser", result.getBody());
-			return "index.jsp";
+			return "index";
 		}
 		else{
 
@@ -252,7 +262,7 @@ public class PageController {
 			
 			restTemplate.put(url, userToUpdate, user.getEmail());
 			session.setAttribute("loggedUser", userToUpdate);
-			return "index.jsp";
+			return "index";
 		}
 		else {
 			
@@ -265,7 +275,7 @@ public class PageController {
 	public String logOut(HttpSession session){
 		
 		session.invalidate();
-		return "index.jsp";
+		return "index";
 		
 	}
 	
@@ -281,11 +291,82 @@ public class PageController {
 		if(result.getStatusCode() == HttpStatus.OK){
 			model.addAttribute("dropOutSuccess", true);
 			session.invalidate();
-			return "index.jsp";
+			return "index";
 		}
 		else {
 			model.addAttribute("dropOutSuccess", false);
 			return "editProfile.jsp";	
 		}
 	}
+	
+	@RequestMapping("/index")
+	public String indexPage(Model model){
+		
+		String url = "http://localhost:11503/event";
+		
+		ResponseEntity<List<Event>> response = restTemplate.exchange(url, HttpMethod.GET, null,	new ParameterizedTypeReference<List<Event>>() {});
+		
+		List<Event> events = response.getBody();
+		
+		List<Event> eventsToShow = new ArrayList<Event>();
+		List<Integer> randomNums = null;
+		
+		if(events.size() > 0){
+			randomNums = ThreadLocalRandom.current().ints(0,events.size()).distinct().limit(9).boxed().collect(Collectors.toList());
+			
+			for(int i = 0; i < randomNums.size(); i++){			
+				eventsToShow.add(events.get(randomNums.get(i)));		
+			}
+		}
+		
+		model.addAttribute("events", eventsToShow);
+		return "index.jsp";
+	}
+	
+	@RequestMapping("/createEvent")
+	public String createEvent(@RequestParam Map<String, String> params, @RequestParam("image") MultipartFile filePart, HttpSession session){
+		
+		String title = params.get("title");
+		String category = params.get("category");
+		byte[] image = new byte[(int) filePart.getSize()];
+	    try {
+			filePart.getInputStream().read(image, 0, image.length);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	    BigDecimal price = new BigDecimal(params.get("price"));
+	    String inputDate = params.get("date"); 
+	    LocalDateTime date = null;
+	    try {
+	    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+	    	date = LocalDateTime.parse(inputDate, formatter);
+	    }
+	    catch(DateTimeParseException exc){
+	    	System.out.println(exc.getMessage());
+	    }
+	    String place = params.get("place");
+	    String description = params.get("description");
+	    int availableTickets = Integer.parseInt(params.get("availableTickets"));
+		
+	    Usr creator = (Usr)session.getAttribute("loggedUser");
+	    
+	    Event newEvent = new Event();
+		newEvent.setTitle(title);
+		newEvent.setCategory(category);
+		newEvent.setImage(image);
+		newEvent.setPrice(price);
+		newEvent.setEventDate(date);
+		newEvent.setPlace(place);
+		newEvent.setDescription(description);
+		newEvent.setAvailableTickets(availableTickets);
+		newEvent.setState("Disponible");
+		newEvent.setCreator(creator);
+		
+		String url = "http://localhost:11503/event";
+		
+		restTemplate.postForObject(url, newEvent, Event.class);
+		
+		return "myCreatedEvents";
+	}
+	
 }

@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+
 public class Event implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
@@ -12,6 +15,7 @@ public class Event implements Serializable{
 	private String category;
 	private byte[] image;
 	private BigDecimal price;
+	@JsonDeserialize(using=LocalDateTimeDeserializer.class)
 	private LocalDateTime eventDate;
 	private String place;
 	private String description;

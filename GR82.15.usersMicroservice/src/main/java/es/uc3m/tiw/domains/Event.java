@@ -11,9 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
 
@@ -27,7 +25,6 @@ public class Event implements Serializable{
 	private String category;
 	private byte[] image;
 	private BigDecimal price;
-	@JsonDeserialize(using=LocalDateTimeDeserializer.class)
 	@JsonSerialize(using=LocalDateTimeSerializer.class)
 	@Convert(converter = LocalDateTimeAttributeConverter.class)
 	private LocalDateTime eventDate;
