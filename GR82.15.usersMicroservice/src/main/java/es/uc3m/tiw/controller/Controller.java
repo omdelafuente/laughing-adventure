@@ -97,6 +97,18 @@ public class Controller {
 		}
 	}
 	
+	@RequestMapping(value="/user/{email:.+}", method=RequestMethod.GET)
+	public Usr getUser(@PathVariable String email){	
+		Usr user = userDAO.findByEmail(email);
+		return user;
+	}
+	
+	@RequestMapping(value="/user", method=RequestMethod.GET)
+	public List<Usr> getAllUsers(){	
+		List<Usr> users = userDAO.findByIsActiveTrue();
+		return users;
+	}
+	
 	
 
 }

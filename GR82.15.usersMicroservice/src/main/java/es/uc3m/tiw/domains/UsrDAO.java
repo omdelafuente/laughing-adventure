@@ -7,4 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 public interface UsrDAO extends CrudRepository<Usr, String>{
 
 	public Usr findByEmail(String email);
-}
+	public List<Usr> findByIsActiveTrue();
+} 
