@@ -369,4 +369,21 @@ public class PageController {
 		return "myCreatedEvents";
 	}
 	
+	@RequestMapping("/event")
+	public String getEvent(@RequestParam(value="id", required=true) int id, @RequestParam(value="type", required=false) String type, Model model){
+		
+		String url = "http://localhost:11503/event/{id}";
+		
+		Event event = restTemplate.getForObject(url, Event.class, id);
+		model.addAttribute("event", event);
+		
+		if(type != null){				
+			return "editEvent.jsp";
+		} else {
+			return "event.jsp";
+		}
+	}
+	
+	
+	
 }

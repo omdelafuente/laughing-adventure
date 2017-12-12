@@ -29,5 +29,14 @@ public class Controller {
 		return eventDAO.save(event);
 	}
 	
+	@RequestMapping(value="/event/{id}", method=RequestMethod.GET)
+	public Event getEvent(@PathVariable int id){
+		return eventDAO.findById(id);
+	}
+	
+	
+	
+	
+	
 
 }

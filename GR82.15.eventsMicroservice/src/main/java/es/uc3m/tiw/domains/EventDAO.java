@@ -7,5 +7,6 @@ import org.springframework.data.repository.CrudRepository;
 public interface EventDAO extends CrudRepository<Event, Integer> {
 	
 	public List<Event> findAll();
-	public Event findById(Integer id);
+	public Event findById(int id);
+	
 }

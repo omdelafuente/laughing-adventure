@@ -4,9 +4,9 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<link href="resources/css/w3.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="resources/css/fonts.css">
-<script src="lib/jquery-3.2.1.min.js"></script>
+<link href="/css/w3.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="/css/fonts.css">
+<script src="/lib/jquery-3.2.1.min.js"></script>
 <title>Log in</title>
 </head>
 

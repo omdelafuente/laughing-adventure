@@ -1,13 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"
-	import="es.uc3m.tiw.domains.Event, java.time.LocalDateTime, org.apache.commons.codec.binary.StringUtils, org.apache.commons.codec.binary.Base64;"%>
+	import="es.uc3m.tiw.domains.Event, java.time.LocalDateTime, org.apache.commons.codec.binary.StringUtils, org.apache.commons.codec.binary.Base64"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link href="resources/css/w3.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="resources/css/fonts.css">
-<link rel="stylesheet" href="resources/css/font-awesome-4.7.0/css/font-awesome.min.css">
+<link href="/css/w3.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="/css/fonts.css">
+<link rel="stylesheet" href="/css/font-awesome-4.7.0/css/font-awesome.min.css">
 <title>Evento</title>
 
 <style>
@@ -121,11 +121,11 @@ body, h1, h2, h3, h4, h5, h6, .w3-wide {
 						String description = event.getDescription();
 						description = description.replaceAll("(\r\n|\r|\n|\n\r)", "<br>");
 					%>
-					<h5>Descripción</h5>
+					<h5><b>Descripción</b></h5>
 					<p style="text-align: justify"><%=description%></p>
 				</div>
 				<div class="w3-third w3-container">
-					<h5>Información del evento</h5>
+					<h5><b>Información del evento</b></h5>
 					<label>Categoría</label>
 					<p class="w3-border w3-padding-large w3-padding-16 w3-center"><%=event.getCategory()%></p>
 					<label>Precio</label>
