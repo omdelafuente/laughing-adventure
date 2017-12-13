@@ -2,10 +2,12 @@ package es.uc3m.tiw.controller;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
@@ -397,6 +399,69 @@ public class PageController {
 		return "myCreatedEvents.jsp";
 	}
 	
+	@RequestMapping("/search")
+	public String search(Model model, @RequestParam(value="type") String type, @RequestParam(value="search", required=false) String str, @RequestParam Map<String, String> params){
+		
+		List<Event> retrievedEvents = null;
+		
+		if(type.equals("advanced")){
+			
+			
+			String title = params.get("title");
+			String category = params.get("category");
+			String place = params.get("place");
+			String description = params.get("description");
+			String state = params.get("state");
+			BigDecimal priceMin = null;
+			BigDecimal priceMax = null;
+			if(!params.get("priceMin").isEmpty()){
+				priceMin = new BigDecimal(params.get("priceMin"));
+			}
+			if(!params.get("priceMax").isEmpty()){
+				priceMax = new BigDecimal(params.get("priceMax"));
+			}
+			LocalDateTime dateMin = null;
+			LocalDateTime dateMax = null;
+			
+			try {
+		    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		    	if(!params.get("dateMin").isEmpty()){
+		    		LocalDate dateMinAux =  LocalDate.parse(params.get("dateMin"), formatter);;
+		    		dateMin = dateMinAux.atStartOfDay();
+		    	}
+		    	if(!params.get("dateMax").isEmpty()){
+		    		LocalDate dateMaxAux = LocalDate.parse(params.get("dateMax"), formatter);
+		    		dateMax = dateMaxAux.atStartOfDay();
+		    	}
+		    }
+			
+		    catch(DateTimeParseException exc){
+		    	System.out.println(exc.getMessage());
+		    }
+			
+			String url = "http://localhost:11503/event?title={title}&category={category}&place={place}&description={description}&state={state}&priceMin={priceMin}&priceMax={priceMax}&dateMin={dateMin}&dateMax={dateMax}";
+			ResponseEntity<List<Event>> response = restTemplate.exchange(url, HttpMethod.GET, null,	new ParameterizedTypeReference<List<Event>>() {}, title, category, place, description, state, priceMin, priceMax, dateMin, dateMax);
+			
+			retrievedEvents = response.getBody();
+			
+		}
+		else if(type.equals("simple")){
+			
+			String url = "http://localhost:11503/event?str={str}";
+			ResponseEntity<List<Event>> response = restTemplate.exchange(url, HttpMethod.GET, null,	new ParameterizedTypeReference<List<Event>>() {}, str);
+			retrievedEvents = response.getBody();
+		}
+		
+		model.addAttribute("events", retrievedEvents);
+		return "searchResults.jsp";
+		
+	}
+	
+	@RequestMapping("/cancelEvent")
+	public String cancelEvent(@RequestParam int id){
+		return null;
+		//mirar a lo mejor se puede pasar parte del modificar usuario al microservicio
+	}
 	
 	
 	

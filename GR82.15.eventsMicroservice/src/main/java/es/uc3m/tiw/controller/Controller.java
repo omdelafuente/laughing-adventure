@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -64,13 +65,14 @@ public class Controller {
 			if(str != null){
 				return eventDAO.findMatchingString(str);
 			}
-			else if(email != null){
-				return eventDAO.findByCreatorEmail(email);				
-			}
 			else {
-				return eventDAO.findByMultipleFields(title, category, place, description, state, priceMin, priceMax, dateMin, dateMax);
-			}
-			
+				if(email != null){
+					return eventDAO.findByCreatorEmail(email);				
+				}
+				else {
+					return eventDAO.findByMultipleFields(title, category, place, description, state, priceMin, priceMax, dateMin, dateMax);
+				}
+			}	
 		}
 		 
 	}
