@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import es.uc3m.tiw.domains.*;
-
 @Controller
 public class PageController {
 	
@@ -383,6 +382,22 @@ public class PageController {
 			return "event.jsp";
 		}
 	}
+	
+	@RequestMapping("/myCreatedEvents")
+	public String getCreatedEvents(HttpSession session, Model model){
+		
+		Usr user = (Usr)session.getAttribute("loggedUser");
+		
+		String url = "http://localhost:11503/event?email={email}";
+		
+		ResponseEntity<List<Event>> response = restTemplate.exchange(url, HttpMethod.GET, null,	new ParameterizedTypeReference<List<Event>>() {}, user.getEmail());
+		
+		model.addAttribute("events", response.getBody());
+		
+		return "myCreatedEvents.jsp";
+	}
+	
+	
 	
 	
 	
