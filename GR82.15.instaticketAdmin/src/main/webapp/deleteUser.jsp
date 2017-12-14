@@ -45,6 +45,18 @@ body, h1, h2, h3, h4, h5, h6, .w3-wide {
 			<%
 				Usr user = (Usr) request.getAttribute("user");
 			%>
+			
+			<%
+				if ((Boolean) request.getAttribute("deleteError") != null) {
+					
+			%>
+
+			<div class="w3-panel w3-red w3-card-4">
+				<p><%="El usuario aún tiene eventos activos, por lo que no puede ser eliminado. Cancela todos sus eventos para eliminarlo."%></p>
+			</div>
+			<%
+				}
+			%>
 
 			<p>¿Estás seguro de que quieres eliminar este usuario?</p>
 			<p>El usuario no podrá volver a acceder al portal.</p>

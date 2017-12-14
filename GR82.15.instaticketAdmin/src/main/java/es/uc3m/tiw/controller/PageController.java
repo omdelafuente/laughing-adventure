@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -132,7 +133,7 @@ public class PageController {
 			
 			event.setState("Cancelado");		
 			restTemplate.put(url, event, event.getId());
-			return "index";
+			return "index.jsp";
 		}
 	}
 	
@@ -221,8 +222,116 @@ public class PageController {
 		
 		restTemplate.put(url, event, event.getId());
 		
-		return "events";
+		return "index.jsp";
 	    
+	}
+	
+	@RequestMapping("/editUser")
+	public String editUser(Model model, @RequestParam Map<String, String> params, HttpSession session, @RequestParam(value="type", required=false) String type){
+		
+		String url = "http://localhost:11502/user/{email}";
+		Usr user = restTemplate.getForObject(url, Usr.class, params.get("email"));
+		
+		if(type != null){
+			
+			model.addAttribute("user", user);
+			return "editUser.jsp";
+			
+		}
+		else {
+			
+			String name = params.get("name");
+			String surname = params.get("surname");
+			Usr updatedUser = new Usr();
+			updatedUser.setEmail(user.getEmail());
+			updatedUser.setPassword(user.getPassword());
+			updatedUser.setIsActive(true);
+			
+			ArrayList<String> errorEdit = new ArrayList<String>();
+			boolean editSuccess = true;
+			
+			if((name.isEmpty() || name.equals(user.getName())) && (surname.isEmpty() || surname.equals(user.getSurname()))){
+				editSuccess = false;
+				errorEdit.add("No hay ningún campo que modificar.");
+			}
+			else {
+				
+				if(!name.isEmpty()){
+					
+					if(!name.equals(user.getName())){
+						if(!name.matches("^[\\p{Space}\\p{L}]+$")){
+							editSuccess = false;
+							errorEdit.add("El nombre solo puede contener letras.");
+						}
+						updatedUser.setName(name);
+					}else{
+						updatedUser.setName(user.getName());
+					}
+					
+				}else{
+					updatedUser.setName(user.getName());
+				}
+				
+				if(!surname.isEmpty()){
+					
+					if(!surname.equals(user.getSurname())){
+						if(!surname.matches("^[\\p{Space}\\p{L}]+$")){
+							editSuccess = false;
+							errorEdit.add("Los apellidos solo pueden contener letras.");
+						}
+						updatedUser.setSurname(surname);
+					}else{
+						updatedUser.setSurname(user.getSurname());
+					}
+				}else{
+					updatedUser.setSurname(user.getSurname());
+				}
+			}
+			
+			model.addAttribute("editSuccess", editSuccess);
+			
+			if(editSuccess){
+					
+				url = "http://localhost:11502/user/{email}";
+				
+				restTemplate.put(url, updatedUser, user.getEmail());
+				
+				return "index.jsp";
+			} else {
+				
+				model.addAttribute("errorEdit", errorEdit);
+				model.addAttribute("user", user);
+				return "editUser.jsp";
+			}
+			
+		}
+	}
+	
+	@RequestMapping("/deleteUser")
+	public String deleteUser(Model model, @RequestParam String email, @RequestParam(value="type", required=false) String type){
+		
+		String url = "http://localhost:11502/user/{email}";
+		Usr user = restTemplate.getForObject(url, Usr.class, email);
+		
+		if(type != null){
+			
+			model.addAttribute("user", user);
+			return "deleteUser.jsp";
+			
+		}else {
+			
+			ResponseEntity<Usr> result = restTemplate.exchange(url, HttpMethod.DELETE, null, Usr.class, user.getEmail());
+			
+			if(result.getStatusCode() == HttpStatus.OK){			
+				return "index.jsp";
+			}
+			else {
+				
+				model.addAttribute("deleteError", true);
+				model.addAttribute("user", user);
+				return "deleteUser.jsp";			
+			}		
+		}	
 	}
 	
 	
