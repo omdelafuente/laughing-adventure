@@ -454,14 +454,94 @@ public class PageController {
 		
 		model.addAttribute("events", retrievedEvents);
 		return "searchResults.jsp";
-		
 	}
 	
 	@RequestMapping("/cancelEvent")
 	public String cancelEvent(@RequestParam int id){
-		return null;
-		//mirar a lo mejor se puede pasar parte del modificar usuario al microservicio
+		
+		String url = "http://localhost:11503/event/{id}";
+		
+		Event event = restTemplate.getForObject(url, Event.class, id);
+		event.setState("Cancelado");
+		
+		restTemplate.put(url, event, event.getId());
+		
+		return "myCreatedEvents";
 	}
+	
+	@RequestMapping("/editEvent")
+	public String editEvent(@RequestParam Map<String, String> params, @RequestParam("image") MultipartFile filePart){
+		
+		int id = Integer.parseInt(params.get("id"));
+		String title = params.get("title");
+		String place = params.get("place");
+	    String description = params.get("description");
+	    BigDecimal price = null;
+	    if(!params.get("price").isEmpty()){
+			price = new BigDecimal(params.get("price"));
+		}
+	    int availableTickets = 0;
+	    
+	    if(!params.get("availableTickets").isEmpty()){
+	    	availableTickets = Integer.parseInt(params.get("availableTickets"));
+	    }
+	    
+		String inputDate = params.get("date"); 
+	    LocalDateTime date = null;
+	    try {
+	    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+	    	if(!params.get("date").isEmpty()){
+	    		date = LocalDateTime.parse(inputDate, formatter);
+	    	}    	
+	    }
+	    catch(DateTimeParseException exc){
+	    	System.out.println(exc.getMessage());
+	    }
+	    
+	    String url = "http://localhost:11503/event/{id}";
+		Event event = restTemplate.getForObject(url, Event.class, id);
+		
+		if(filePart.getSize() > 0){
+			byte[] image = new byte[(int) filePart.getSize()];
+		    try {
+				filePart.getInputStream().read(image, 0, image.length);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		    event.setImage(image);
+		}
+		
+		if(!title.isEmpty() && !title.equals(event.getTitle())){
+			event.setTitle(title);
+		}
+		
+		if(!place.isEmpty() && !place.equals(event.getPlace())){
+			event.setPlace(place);
+		}
+		
+		if(price != null && !price.equals(event.getPrice())){
+			event.setPrice(price);
+		}
+
+		if(!description.isEmpty() && !description.equals(event.getDescription())){
+			event.setDescription(description);
+		}
+		
+		if(date != null && !date.equals(event.getEventDate())){
+			event.setEventDate(date);
+		}
+		
+		if(availableTickets != 0 && availableTickets != event.getAvailableTickets()){
+			event.setAvailableTickets(availableTickets);
+		}
+		
+		url = "http://localhost:11503/event/{id}";
+		
+		restTemplate.put(url, event, event.getId());    
+		
+		return "event?id="+id;
+	}
+	
 	
 	
 	

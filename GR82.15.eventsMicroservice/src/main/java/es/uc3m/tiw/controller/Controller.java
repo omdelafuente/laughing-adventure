@@ -33,6 +33,12 @@ public class Controller {
 		return eventDAO.findById(id);
 	}
 	
+	@RequestMapping(value="/event/{id}", method=RequestMethod.PUT)
+	public void editUser(@PathVariable int id, @RequestBody Event event){
+		event.setId(id);		
+		eventDAO.save(event);
+	}
+	
 	@RequestMapping(value="/event", method=RequestMethod.GET)
 	public List<Event> getEvents(
 			@RequestParam(value = "str", required = false) String str,
