@@ -1,11 +1,14 @@
 package es.uc3m.tiw.controller;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpResponse;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
+import es.uc3m.tiw.domains.Event;
 import es.uc3m.tiw.domains.Usr;
 
 @Controller
@@ -84,8 +88,30 @@ public class PageController {
 		}	
 	}
 	
+	@RequestMapping("/events")
+	public String getEventsList(Model model){
+		
+		String url = "http://localhost:11503/event";
+		
+		ResponseEntity<List<Event>> response = restTemplate.exchange(url, HttpMethod.GET, null,	new ParameterizedTypeReference<List<Event>>() {});
+		
+		model.addAttribute("events", response.getBody());
+		
+		return "events.jsp";
+	}
 	
+	@RequestMapping("/users")
+	public String getUsersList(Model model){
+		
+		String url = "http://localhost:11502/user";
+		
+		ResponseEntity<List<Usr>> response = restTemplate.exchange(url, HttpMethod.GET, null,	new ParameterizedTypeReference<List<Usr>>() {});
+		
+		model.addAttribute("users", response.getBody());
+		
+		return "users.jsp";
 	
+	}
 	
 
 }

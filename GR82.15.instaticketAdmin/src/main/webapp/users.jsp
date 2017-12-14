@@ -43,23 +43,18 @@ body, h1, h2, h3, h4, h5, h6, .w3-wide {
 		</form>
 		</header>
 
-		<%
-			if (request.getAttribute("noUsers") != null) {
-		%>
-		<div class="w3-container w3-center">
-			<p>No se han encontrado usuarios activos.</p>
-		</div>
-		<%
-			}
-
-			else {
-		%>
-
 		<!-- Se muestran todos los usuarios activos -->
 		<div class="w3-container w3-center">
 
 			<%
 				List<Usr> users = (List<Usr>) request.getAttribute("users");
+
+				if (users.isEmpty()) {
+			%>
+
+					No hay ningún usuario todavía.
+			<%
+				} else {
 			%>
 
 			<%
