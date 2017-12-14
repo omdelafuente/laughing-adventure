@@ -4,8 +4,8 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="resources/css/w3.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="resources/css/fonts.css">
+<link href="/css/w3.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="/css/fonts.css">
 <title>Editar evento</title>
 </head>
 <style>
@@ -68,7 +68,6 @@ body, h1, h2, h3, h4, h5, h6, .w3-wide {
 				<br>
 				<input class="w3-input w3-border w3-light-grey" style="width: 50%; display: inline-block" type="file" name="image"
 					accept="image/*" />
-
 				<p>Precio de la entrada:</p>
 				<input class="w3-input w3-border w3-light-grey" style="width: 50%; display: inline-block" type="number" name="price"
 					min="0.0" max="9999.99" step=".01" value="<%=eventToEdit.getPrice()%>">

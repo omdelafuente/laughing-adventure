@@ -1,8 +1,8 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="/css/w3.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="/css/fonts.css">
@@ -24,14 +24,14 @@ body, h1, h2, h3, h4, h5, h6, .w3-wide {
 
 <body>
 
-	<!-- Modal con el formulario de búsqueda avanzada -->
+	<!-- Modal con el formulario de bÃºsqueda avanzada -->
 	<div class="w3-container">
 		<div id="searchModal" class="w3-modal">
 			<div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width: 650px">
 				<div class="w3-center">
 					<br> <span onclick="document.getElementById('searchModal').style.display='none'"
 						class="w3-button w3-xlarge w3-hover-red w3-display-topright">&times;</span>
-					<h3>Búsqueda avanzada</h3>
+					<h3>BÃºsqueda avanzada</h3>
 				</div>
 
 				<div class="w3-panel w3-red w3-card-4 form-errors" style="display: none"></div>
@@ -39,11 +39,11 @@ body, h1, h2, h3, h4, h5, h6, .w3-wide {
 				<form id="searchForm" class="w3-container" method="post" action="search">
 					<div class="w3-section">
 						<input type="hidden" name="type" value="advanced">
-						<label><b>Título</b></label>
+						<label><b>TÃ­tulo</b></label>
 						<input name="title" class="w3-input w3-border w3-light-grey w3-margin-bottom input-group" type="text" maxlength="30">
-						<label><b>Categoría</b></label>
+						<label><b>CategorÃ­a</b></label>
 						<select name="category" class="w3-select w3-border w3-light-grey w3-margin-bottom input-group">
-							<option value="" disabled selected>Escoge una categoría</option>
+							<option value="" disabled selected>Escoge una categorÃ­a</option>
 							<option value="Cine">Cine</option>
 							<option value="Teatro">Teatro</option>
 							<option value="Conciertos">Conciertos</option>
@@ -70,17 +70,17 @@ body, h1, h2, h3, h4, h5, h6, .w3-wide {
 						<div class="w3-row">
 							<div class="w3-center">Rango de precios</div>
 							<div class="w3-container w3-half">
-								<label><b>Precio mínimo</b></label>
+								<label><b>Precio mÃ­nimo</b></label>
 								<input class="w3-input w3-border w3-light-grey w3-margin-bottom input-group" type="number" name="priceMin" min="0.0"
 									max="9999.99" step=".01">
 							</div>
 							<div class="w3-container w3-half">
-								<label><b>Precio máximo</b></label>
+								<label><b>Precio mÃ¡ximo</b></label>
 								<input class="w3-input w3-border w3-light-grey w3-margin-bottom input-group" type="number" name="priceMax" min="0.0"
 									max="9999.99" step=".01">
 							</div>
 						</div>
-						<label><b>Texto en descripción</b></label>
+						<label><b>Texto en descripciÃ³n</b></label>
 						<input name="description" class="w3-input w3-border w3-light-grey w3-margin-bottom input-group" type="text"
 							maxlength="50">
 						<label><b>Estado</b></label>
@@ -107,7 +107,7 @@ body, h1, h2, h3, h4, h5, h6, .w3-wide {
 	</div>
 
 	<script>
-		//validación del formulario client-side con JQuery Validation plugin
+		//validaciÃ³n del formulario client-side con JQuery Validation plugin
 		$(document)
 				.ready(
 						function() {
@@ -205,10 +205,10 @@ body, h1, h2, h3, h4, h5, h6, .w3-wide {
 													dateMax : "Debes rellenar al menos un campo.",
 													dateMin : "Debes rellenar al menos un campo.",
 													priceMax : {
-														min : "El precio máximo no puede ser menor que el mínimo."
+														min : "El precio mÃ¡ximo no puede ser menor que el mÃ­nimo."
 													},
 													priceMin : {
-														max : "El precio mínimo no puede ser mayor que el máximo."
+														max : "El precio mÃ­nimo no puede ser mayor que el mÃ¡ximo."
 													},
 													description : "Debes rellenar al menos un campo.",
 													state : "Debes rellenar al menos un campo."
