@@ -42,7 +42,18 @@ public class Controller {
 		if(userDAO.exists(user.getEmail())){
 			Usr existingUser = userDAO.findByEmail(user.getEmail());
 			if(!existingUser.isActive()){
-				return new ResponseEntity<Usr>(user, HttpStatus.GONE);
+				
+				if(user.getEmail().equals("admin@admin.com")){
+					if(!user.getPassword().equals(existingUser.getPassword())){
+						return new ResponseEntity<Usr>(user, HttpStatus.BAD_REQUEST);
+					}
+					else {
+						return new ResponseEntity<Usr>(existingUser, HttpStatus.OK);
+					}
+				}
+				else {
+					return new ResponseEntity<Usr>(user, HttpStatus.GONE);
+				}						
 			}
 			else{
 				if(!user.getPassword().equals(existingUser.getPassword())){
