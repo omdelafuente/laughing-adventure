@@ -52,7 +52,7 @@ body, h1, h2, h3, h4, h5, h6, .w3-wide {
 				<form method="post" action="chat" autocomplete="off">
 					<input type="hidden" name="userEmail" value="<%=request.getAttribute("userEmail")%>">
 					<input type="hidden" name="type" value="write">
-					<input class="w3-input w3-border w3-light-grey" name="msg" type="text" required>
+					<input class="w3-input w3-border w3-light-grey" name="msg" type="text" maxlength="250" required>
 					<p>
 						<button class="w3-btn w3-border" type="submit">Enviar</button>
 					<p>

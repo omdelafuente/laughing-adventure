@@ -115,10 +115,13 @@ public class Controller {
 	}
 	
 	@RequestMapping(value="/user", method=RequestMethod.GET)
-	public List<Usr> getAllUsers(@RequestParam(required=false) boolean creators){
+	public List<Usr> getAllUsers(@RequestParam(required=false) boolean creators, @RequestParam(required=false) String search){
 		
 		if(creators){
 			return userDAO.findCreators();
+		}
+		else if(search != null){
+			return userDAO.findMatchingString(search);
 		}
 		else{
 			return userDAO.findByIsActiveTrue();

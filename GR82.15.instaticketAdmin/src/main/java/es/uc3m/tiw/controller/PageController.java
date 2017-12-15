@@ -400,6 +400,21 @@ public class PageController {
 		
 		return "chat.jsp";
 		
+	}
+	
+	@RequestMapping("/search")
+	public String search(Model model, @RequestParam String search){
+		
+		
+		String url = "http://localhost:11503/event?str={str}";
+		ResponseEntity<List<Event>> eventsResponse = restTemplate.exchange(url, HttpMethod.GET, null,	new ParameterizedTypeReference<List<Event>>() {}, search);
+		url = "http://localhost:11502/user?search={search}";
+		ResponseEntity<List<Usr>> usersResponse = restTemplate.exchange(url, HttpMethod.GET, null,	new ParameterizedTypeReference<List<Usr>>() {}, search);
+
+		model.addAttribute("events", eventsResponse.getBody());
+		model.addAttribute("users", usersResponse.getBody());
+		
+		return "searchResults.jsp";
 		
 	}
 	
