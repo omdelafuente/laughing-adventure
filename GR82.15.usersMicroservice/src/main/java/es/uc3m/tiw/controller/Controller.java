@@ -115,9 +115,14 @@ public class Controller {
 	}
 	
 	@RequestMapping(value="/user", method=RequestMethod.GET)
-	public List<Usr> getAllUsers(){	
-		List<Usr> users = userDAO.findByIsActiveTrue();
-		return users;
+	public List<Usr> getAllUsers(@RequestParam(required=false) boolean creators){
+		
+		if(creators){
+			return userDAO.findCreators();
+		}
+		else{
+			return userDAO.findByIsActiveTrue();
+		}
 	}
 	
 	

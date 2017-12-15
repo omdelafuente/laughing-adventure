@@ -26,6 +26,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import es.uc3m.tiw.domains.Event;
+import es.uc3m.tiw.domains.Message;
 import es.uc3m.tiw.domains.Usr;
 
 @Controller
@@ -332,6 +333,74 @@ public class PageController {
 				return "deleteUser.jsp";			
 			}		
 		}	
+	}
+	
+	@RequestMapping("/availableChats")
+	public String showAvailableChats(Model model){
+		
+		String url = "http://localhost:11502/user?creators=true";
+		
+		ResponseEntity<List<Usr>> response = restTemplate.exchange(url, HttpMethod.GET, null,	new ParameterizedTypeReference<List<Usr>>() {});
+		
+		List<Usr> users = response.getBody();
+		
+		if(users.isEmpty()){
+			model.addAttribute("noUsers", true);
+		}
+		else {
+			model.addAttribute("users", users);
+		}
+		
+		return "availableChats.jsp";
+	}
+	
+	@RequestMapping("/chat")
+	public String chat(HttpSession session, Model model, @RequestParam(value="type", required=false) String type, @RequestParam(value="userEmail", required=false) String userEmail, @RequestParam(required=false) String msg){
+		
+		model.addAttribute("userEmail", userEmail);
+		
+		if(type == null){
+			
+			String url = "http://localhost:11504/chat?receiverEmail=admin@admin.com&senderEmail={email}";
+			
+			ResponseEntity<List<Message>> messages = restTemplate.exchange(url, HttpMethod.GET, null,	new ParameterizedTypeReference<List<Message>>() {}, userEmail);
+			
+			model.addAttribute("messages", messages.getBody());
+		}
+		else {
+			
+			if(type.equals("write")){
+				
+				Usr user = new Usr();
+				user.setEmail(userEmail);
+				
+				Message message = new Message();
+				message.setMessage(msg);
+				message.setReceiver(user);
+				message.setSender((Usr)session.getAttribute("loggedUser"));
+				
+				String url = "http://localhost:11504/chat";
+				
+				ResponseEntity<Message> result = restTemplate.postForEntity(url, message, Message.class);
+				
+				if(result.getStatusCode() == HttpStatus.OK){
+					model.addAttribute("sendSuccess", true);
+				}			
+			}
+			else {
+				
+				String url = "http://localhost:11504/chat?receiverEmail=admin@admin.com&senderEmail={email}";
+				
+				ResponseEntity<List<Message>> messages = restTemplate.exchange(url, HttpMethod.GET, null,	new ParameterizedTypeReference<List<Message>>() {}, userEmail);
+				
+				model.addAttribute("messages", messages.getBody());
+				
+			}
+		}
+		
+		return "chat.jsp";
+		
+		
 	}
 	
 	

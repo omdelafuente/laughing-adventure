@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="es.uc3m.tiw.domains.*, java.util.List, java.time.LocalDateTime, java.time.format.DateTimeFormatter"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -72,11 +72,37 @@ body, h1, h2, h3, h4, h5, h6, .w3-wide {
 		<%} %>
 
 		<%if(request.getAttribute("messages") != null) {%>
+		
+		<%List<Message> messages = (List<Message>)request.getAttribute("messages");%>
+
 		<div class="w3-container w3-left" style="width: 100%">
+			<%if(!messages.isEmpty()){ %>
 			<p>Mensajes</p>
 			<hr>
-			<%=request.getAttribute("messages")%>
-			<hr>
+			<%for(int i = 0; i < messages.size(); i++){ %>
+			
+				<%Message msg = messages.get(i); 
+				LocalDateTime date = msg.getDate();
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a");
+				
+				
+				if(msg.getSender().getEmail().equals(((Usr)request.getSession().getAttribute("loggedUser")).getEmail())){%>
+					<div class="w3-container" style="width: 100%">
+						<p class="w3-right"><span class="w3-text-grey">Tú, el <%=date.format(formatter)%>: </span><%=msg.getMessage()%></p>
+					</div>
+				<% }
+				else {%>
+					<div class="w3-container"  style="width: 100%">
+						<p class="w3-left"><span class="w3-text-grey">Administrador, el <%=date.format(formatter)%>: </span><%=msg.getMessage()%></p>
+					</div>
+				<%} 
+				
+			} 
+			}
+			else {%>
+			<p>No hay mensajes.</p>
+			<%} %>
+			
 		</div>
 		<%} %>
 
@@ -87,7 +113,7 @@ body, h1, h2, h3, h4, h5, h6, .w3-wide {
 			<p>Sólo los usuarios que hayan creado eventos pueden ponerse en contacto con el administrador.</p>
 		</div>
 		<%} %>
-
+		
 
 
 		<!-- End page content -->

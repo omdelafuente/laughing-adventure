@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import es.uc3m.tiw.domains.*;
+
 @Controller
 public class PageController {
 	
@@ -540,6 +541,66 @@ public class PageController {
 		restTemplate.put(url, event, event.getId());    
 		
 		return "event?id="+id;
+	}
+	
+	@RequestMapping("/chat")
+	public String chatWithAdministrator (Model model, HttpSession session, @RequestParam(value="type", required=false) String type, @RequestParam(required=false) String msg){
+		
+		Usr user = (Usr)session.getAttribute("loggedUser");
+		
+		if(type == null){
+			
+			String url = "http://localhost:11503/event?email={email}";
+			
+			ResponseEntity<List<Event>> response = restTemplate.exchange(url, HttpMethod.GET, null,	new ParameterizedTypeReference<List<Event>>() {}, user.getEmail());
+			
+			if(response.getBody().isEmpty()){
+				model.addAttribute("creator", false);
+			}
+			else {
+				
+				url = "http://localhost:11504/chat?receiverEmail={email}&senderEmail=admin@admin.com";
+				
+				ResponseEntity<List<Message>> messages = restTemplate.exchange(url, HttpMethod.GET, null,	new ParameterizedTypeReference<List<Message>>() {}, user.getEmail());
+				
+				model.addAttribute("messages", messages.getBody());			
+			}
+			
+		}
+		else {
+			
+			if(type.equals("write")){
+				
+				Usr admin = new Usr();
+				admin.setEmail("admin@admin.com");
+				
+				Message message = new Message();
+				message.setMessage(msg);
+				message.setSender(user);
+				message.setReceiver(admin);
+				
+				String url = "http://localhost:11504/chat";
+				
+				ResponseEntity<Message> result = restTemplate.postForEntity(url, message, Message.class);
+				
+				if(result.getStatusCode() == HttpStatus.OK){
+					model.addAttribute("sendSuccess", true);
+				}
+				
+			}
+			else{
+				String url = "http://localhost:11504/chat?receiverEmail={email}&senderEmail=admin@admin.com";
+				
+				ResponseEntity<List<Message>> messages = restTemplate.exchange(url, HttpMethod.GET, null,	new ParameterizedTypeReference<List<Message>>() {}, user.getEmail());
+				
+				model.addAttribute("messages", messages.getBody());
+			}
+			
+		}
+		
+		return "chat.jsp";
+		
+		
 	}
 	
 	
