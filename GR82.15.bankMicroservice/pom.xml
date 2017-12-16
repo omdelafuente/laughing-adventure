@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>es.uc3m.tiw</groupId>
-	<artifactId>instaticketBank</artifactId>
+	<artifactId>GR82.15.bankMicroservice</artifactId>
 	<version>0.0.1</version>
 	<packaging>jar</packaging>
 
@@ -50,6 +50,10 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+   			<groupId>com.fasterxml.jackson.datatype</groupId>
+    		<artifactId>jackson-datatype-jsr310</artifactId>
 		</dependency>
 	</dependencies>
 

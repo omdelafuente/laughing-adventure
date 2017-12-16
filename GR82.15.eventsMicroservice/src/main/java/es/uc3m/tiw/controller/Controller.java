@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,8 @@ public class Controller {
 	
 	@Autowired
 	EventDAO eventDAO;
+	@Autowired
+	PurchaseDAO purchaseDAO;
 	
 	@RequestMapping(value="/event", method=RequestMethod.POST)
 	public Event createEvent(@RequestBody Event event){
@@ -83,4 +86,31 @@ public class Controller {
 		 
 	}
 	
+	@RequestMapping(value="/purchase", method=RequestMethod.POST)
+	public ResponseEntity<Purchase> purchase(@RequestBody Purchase purchase){
+		
+		Event event = purchase.getEvent();
+		
+		int newTickets = event.getAvailableTickets() - purchase.getTickets();
+
+		if(newTickets == 0){
+			event.setState("Completo");
+		}	
+		event.setAvailableTickets(newTickets);
+		eventDAO.save(event);
+			
+		return new ResponseEntity<Purchase>(purchaseDAO.save(purchase), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/purchase", method=RequestMethod.GET)
+	public List<Purchase> getPurchases(@RequestParam(required = false) String email, @RequestParam(required=false) Integer eventId){
+		
+		if(email != null){
+			return purchaseDAO.findByClientEmail(email);		
+		}
+		else {
+			return purchaseDAO.findByEventId(eventId);
+		}
+	}
+		
 }

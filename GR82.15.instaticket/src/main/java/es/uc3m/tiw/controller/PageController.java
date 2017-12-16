@@ -45,13 +45,13 @@ public class PageController {
 
 			@Override
 			public void handleError(ClientHttpResponse arg0) throws IOException {
-				// TODO Auto-generated method stub
+				
 				
 			}
 
 			@Override
 			public boolean hasError(ClientHttpResponse arg0) throws IOException {
-				// TODO Auto-generated method stub
+				
 				return false;
 			}
 			
@@ -599,10 +599,107 @@ public class PageController {
 		}
 		
 		return "chat.jsp";
+	}
+	
+	@RequestMapping("/buyTicket")
+	public String buyTicket(HttpSession session, Model model, @RequestParam(required=false)Map<String, String> params, @RequestParam int id, @RequestParam(required=false) String buy, @RequestParam(required=false) Integer tickets){
 		
+		String url = "http://localhost:11503/event/{id}";
+		
+		Event event = restTemplate.getForObject(url, Event.class, id);
+		Usr client = (Usr)session.getAttribute("loggedUser");
+		
+		if(buy == null){
+			
+			model.addAttribute("event", event);
+			if(event.getCreator().getEmail().equals(client.getEmail())){
+				model.addAttribute("cannotBuy", true);
+				return "event.jsp";
+			}
+			else {
+				return "buyTicket.jsp";
+			}
+		}
+		else {
+			
+			int newTickets = event.getAvailableTickets() - tickets;
+			if(newTickets < 0){
+				model.addAttribute("purchaseSuccess", false);
+				model.addAttribute("event", event);
+				return "buyTicket.jsp";
+			}
+			else {
+				
+				Transaction transaction = new Transaction();
+				transaction.setAmount(event.getPrice().multiply(new BigDecimal(tickets)));
+				transaction.setUnits(tickets);
+				transaction.setCreditCardCVC(params.get("cvc"));
+				transaction.setCreditCardNumber(params.get("cc"));
+
+				try {
+				   	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				   	transaction.setCreditCardDate(LocalDate.parse(params.get("date"), formatter));
+				}
+				catch(DateTimeParseException exc){
+				    System.out.println(exc.getMessage());
+				}
+				
+				url= "http://localhost:11505/transaction";
+				
+				ResponseEntity<String> transactionResult = restTemplate.postForEntity(url, transaction, String.class);
+				
+				if(transactionResult.getStatusCode() == HttpStatus.PAYMENT_REQUIRED){
+					
+					model.addAttribute("purchaseSuccess", false);
+					model.addAttribute("transactionFailed", transactionResult.getBody());
+					model.addAttribute("event", event);
+					return "buyTicket.jsp";
+					
+				}
+				else{		
+				
+					Purchase purchase = new Purchase();
+					purchase.setTickets(tickets);
+					purchase.setClient(client);
+					purchase.setEvent(event);
+					
+					url = "http://localhost:11503/purchase";
+					
+					ResponseEntity<Purchase> result = restTemplate.postForEntity(url, purchase, Purchase.class);
+					
+					model.addAttribute("purchaseSuccess", true);
+					return "index";
+				}
+				
+			}
+
+		}
+	}
+	
+	@RequestMapping("/purchasedTickets")
+	public String getPurchasedtickets(HttpSession session, Model model){
+		
+		Usr user = (Usr)session.getAttribute("loggedUser");
+		
+		String url = "http://localhost:11503/purchase?email={email}";
+		
+		ResponseEntity<List<Purchase>> response = restTemplate.exchange(url, HttpMethod.GET, null,	new ParameterizedTypeReference<List<Purchase>>() {}, user.getEmail());
+		
+		model.addAttribute("purchases", response.getBody());
+		return "purchasedTickets.jsp";
 		
 	}
 	
+	@RequestMapping("/soldTickets")
+	public String getSoldTickets(Model model, @RequestParam int id){
+		
+		String url = "http://localhost:11503/purchase?eventId={id}";
+		
+		ResponseEntity<List<Purchase>> response = restTemplate.exchange(url, HttpMethod.GET, null,	new ParameterizedTypeReference<List<Purchase>>() {}, id);
+		
+		model.addAttribute("purchases", response.getBody());
+		return "soldTickets.jsp";
+	}
 	
 	
 	

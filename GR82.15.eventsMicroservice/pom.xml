@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>es.uc3m.tiw</groupId>
-	<artifactId>instaticketEvents</artifactId>
+	<artifactId>GR82.15.eventsMicroservice</artifactId>
 	<version>0.0.1</version>
 	<packaging>jar</packaging>
 
