@@ -22,11 +22,12 @@ public class Controller {
 	@Autowired 
 	UsrDAO userDAO;
 	
+	//registrar un usuario nuevo
+	//200: se ha registrado bien
+	//409: ya existe
 	@RequestMapping(value="/user", method=RequestMethod.POST)
 	public ResponseEntity<Usr> register(@RequestBody Usr user){
-		
-		String email = user.getEmail();
-		
+	
 		if(!userDAO.exists(user.getEmail())){
 			userDAO.save(user);
 			return new ResponseEntity<Usr>(user, HttpStatus.OK);
@@ -36,6 +37,11 @@ public class Controller {
 		}
 	}
 	
+	//autenticacion de un usuario
+	//200: autenticacion correcta
+	//400: autenticacion incorrecta
+	//410: la cuenta fue eliminada
+	//404: la cuenta no existe
 	@RequestMapping(value="/userCredential", method=RequestMethod.POST)
 	public ResponseEntity<Usr> authenticate(@RequestBody Usr user){
 		
@@ -69,12 +75,16 @@ public class Controller {
 		}
 	}
 	
+	//actualizar un usuario con el email indicado
 	@RequestMapping(value="/user/{email:.+}", method=RequestMethod.PUT)
 	public void editUser(@PathVariable String email, @RequestBody Usr user){
 		user.setEmail(email);		
 		userDAO.save(user);
 	}
 	
+	//desactivar un usuario
+	//200: se ha eliminado bien
+	//400: no se ha eliminado porque hay eventos activos
 	@RequestMapping(value="/user/{email:.+}", method=RequestMethod.DELETE)
 	public ResponseEntity<Usr> deleteUser(@PathVariable String email){
 		
@@ -108,12 +118,14 @@ public class Controller {
 		}
 	}
 	
+	//obtener un usuario
 	@RequestMapping(value="/user/{email:.+}", method=RequestMethod.GET)
 	public Usr getUser(@PathVariable String email){	
 		Usr user = userDAO.findByEmail(email);
 		return user;
 	}
 	
+	//obtener una lista de usuarios
 	@RequestMapping(value="/user", method=RequestMethod.GET)
 	public List<Usr> getAllUsers(@RequestParam(required=false) boolean creators, @RequestParam(required=false) String search){
 		

@@ -21,7 +21,7 @@ public class Message implements Serializable{
 		
 	}
 
-	public Message(String message, Usr senderEmail, Usr receiverEmail) {
+	public Message(String message, Usr sender, Usr receiver) {
 		super();
 		this.message = message;
 		this.sender = sender;

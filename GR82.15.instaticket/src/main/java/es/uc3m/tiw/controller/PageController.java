@@ -7,14 +7,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.Part;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -35,9 +33,14 @@ import es.uc3m.tiw.domains.*;
 @Controller
 public class PageController {
 	
+	//RestTemplate para consumir los microservicios
 	@Autowired
 	RestTemplate restTemplate;
+
+	@Autowired
+	HttpSession session;
 	
+	//para evitar que se muestren paginas de error al recibir error de los microservicios
 	@Autowired
 	public PageController(RestTemplate rt){
 		restTemplate = rt;
@@ -58,12 +61,14 @@ public class PageController {
 		});
 	}
 	
+	//pagina de inicio
 	@RequestMapping("/")
 	public String indexView(Model model){
 		
 		return "index";
 	}
 
+	//registro de un usuario y validacion del formulario de registro
 	@RequestMapping("/register")
 	public String register(Model model, @RequestParam Map<String, String> params){
 		
@@ -123,8 +128,9 @@ public class PageController {
 		}
 	}
 	
+	//inicio de sesion
 	@RequestMapping("/login")
-	public String login(Model model, @RequestParam Map<String, String> params, HttpSession session){
+	public String login(Model model, @RequestParam Map<String, String> params){
 	
 		Usr user = new Usr();
 		String url = "http://localhost:11502/userCredential";
@@ -160,8 +166,9 @@ public class PageController {
 		}
 	}
 	
+	//modifica los datos del usuario
 	@RequestMapping("/edit")
-	public String editProfile(Model model, @RequestParam Map<String, String> params, HttpSession session){
+	public String editProfile(Model model, @RequestParam Map<String, String> params){
 		
 		String name = params.get("name");
 		String surname = params.get("surname");
@@ -273,16 +280,18 @@ public class PageController {
 		}
 	}
 	
+	//cierre de sesion
 	@RequestMapping("/logOut")
-	public String logOut(HttpSession session){
+	public String logOut(){
 		
 		session.invalidate();
 		return "index";
 		
 	}
 	
+	//dar de baja a un usuario
 	@RequestMapping("/dropOut")
-	public String dropOut(Model model, HttpSession session){
+	public String dropOut(Model model){
 		
 		Usr user = (Usr) session.getAttribute("loggedUser");
 		
@@ -301,6 +310,7 @@ public class PageController {
 		}
 	}
 	
+	//muestra un serie aleatoria de eventos en la pagina principal
 	@RequestMapping("/index")
 	public String indexPage(Model model){
 		
@@ -325,8 +335,9 @@ public class PageController {
 		return "index.jsp";
 	}
 	
+	//creacion de un evento
 	@RequestMapping("/createEvent")
-	public String createEvent(@RequestParam Map<String, String> params, @RequestParam("image") MultipartFile filePart, HttpSession session){
+	public String createEvent(@RequestParam Map<String, String> params, @RequestParam("image") MultipartFile filePart){
 		
 		String title = params.get("title");
 		String category = params.get("category");
@@ -371,6 +382,7 @@ public class PageController {
 		return "myCreatedEvents";
 	}
 	
+	//devuelve el evento necesario para visualizar/editar
 	@RequestMapping("/event")
 	public String getEvent(@RequestParam(value="id", required=true) int id, @RequestParam(value="type", required=false) String type, Model model){
 		
@@ -386,8 +398,9 @@ public class PageController {
 		}
 	}
 	
+	//devuelve los eventos creados por el usuario logueado
 	@RequestMapping("/myCreatedEvents")
-	public String getCreatedEvents(HttpSession session, Model model){
+	public String getCreatedEvents(Model model){
 		
 		Usr user = (Usr)session.getAttribute("loggedUser");
 		
@@ -400,6 +413,7 @@ public class PageController {
 		return "myCreatedEvents.jsp";
 	}
 	
+	//realiza tanto la búsqueda avanzada como la simple y devuelve los resultados
 	@RequestMapping("/search")
 	public String search(Model model, @RequestParam(value="type") String type, @RequestParam(value="search", required=false) String str, @RequestParam Map<String, String> params){
 		
@@ -457,6 +471,7 @@ public class PageController {
 		return "searchResults.jsp";
 	}
 	
+	//modifica el estado de un evento a cancelado
 	@RequestMapping("/cancelEvent")
 	public String cancelEvent(@RequestParam int id){
 		
@@ -470,6 +485,7 @@ public class PageController {
 		return "myCreatedEvents";
 	}
 	
+	//edición de los datos de un evento
 	@RequestMapping("/editEvent")
 	public String editEvent(@RequestParam Map<String, String> params, @RequestParam("image") MultipartFile filePart){
 		
@@ -543,8 +559,9 @@ public class PageController {
 		return "event?id="+id;
 	}
 	
+	//chat entre usuario y administrador
 	@RequestMapping("/chat")
-	public String chatWithAdministrator (Model model, HttpSession session, @RequestParam(value="type", required=false) String type, @RequestParam(required=false) String msg){
+	public String chatWithAdministrator (Model model, @RequestParam(value="type", required=false) String type, @RequestParam(required=false) String msg){
 		
 		Usr user = (Usr)session.getAttribute("loggedUser");
 		
@@ -601,8 +618,9 @@ public class PageController {
 		return "chat.jsp";
 	}
 	
+	//compra de entradas para un evento
 	@RequestMapping("/buyTicket")
-	public String buyTicket(HttpSession session, Model model, @RequestParam(required=false)Map<String, String> params, @RequestParam int id, @RequestParam(required=false) String buy, @RequestParam(required=false) Integer tickets){
+	public String buyTicket( Model model, @RequestParam(required=false)Map<String, String> params, @RequestParam int id, @RequestParam(required=false) String buy, @RequestParam(required=false) Integer tickets){
 		
 		String url = "http://localhost:11503/event/{id}";
 		
@@ -665,8 +683,7 @@ public class PageController {
 					
 					url = "http://localhost:11503/purchase";
 					
-					ResponseEntity<Purchase> result = restTemplate.postForEntity(url, purchase, Purchase.class);
-					
+					restTemplate.postForEntity(url, purchase, Purchase.class);
 					model.addAttribute("purchaseSuccess", true);
 					return "index";
 				}
@@ -676,8 +693,9 @@ public class PageController {
 		}
 	}
 	
+	//devuelve la lista de entradas que se han comprado
 	@RequestMapping("/purchasedTickets")
-	public String getPurchasedtickets(HttpSession session, Model model){
+	public String getPurchasedtickets(Model model){
 		
 		Usr user = (Usr)session.getAttribute("loggedUser");
 		
@@ -690,6 +708,7 @@ public class PageController {
 		
 	}
 	
+	//devuelve la lista de entradas que se han vendido para un evento
 	@RequestMapping("/soldTickets")
 	public String getSoldTickets(Model model, @RequestParam int id){
 		
@@ -700,8 +719,5 @@ public class PageController {
 		model.addAttribute("purchases", response.getBody());
 		return "soldTickets.jsp";
 	}
-	
-	
-	
 	
 }

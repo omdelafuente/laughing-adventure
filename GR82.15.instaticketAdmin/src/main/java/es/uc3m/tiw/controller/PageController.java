@@ -32,9 +32,11 @@ import es.uc3m.tiw.domains.Usr;
 @Controller
 public class PageController {
 	
+	//RestTemplate para consumir los microservicios
 	@Autowired
 	RestTemplate restTemplate;
 	
+	//para evitar que se muestren paginas de error al recibir codigo de error de los microservicios
 	@Autowired
 	public PageController(RestTemplate rt){
 		restTemplate = rt;
@@ -55,12 +57,14 @@ public class PageController {
 		});
 	}
 	
+	//pagina de inicio
 	@RequestMapping("/")
 	public String indexView(Model model){
 		
 		return "index.jsp";
 	}
 	
+	//cierre de sesion
 	@RequestMapping("/logOut")
 	public String logOut(HttpSession session){
 		
@@ -69,6 +73,7 @@ public class PageController {
 		
 	}
 	
+	//inicio de sesion
 	@RequestMapping("/login")
 	public String login(Model model, @RequestParam String psw, HttpSession session){
 		
@@ -95,6 +100,7 @@ public class PageController {
 		}	
 	}
 	
+	//devuelve la lista de eventos creados
 	@RequestMapping("/events")
 	public String getEventsList(Model model){
 		
@@ -107,6 +113,7 @@ public class PageController {
 		return "events.jsp";
 	}
 	
+	//devuelve la lista de todos los usuarios existentes
 	@RequestMapping("/users")
 	public String getUsersList(Model model){
 		
@@ -119,6 +126,7 @@ public class PageController {
 		return "users.jsp";
 	}
 	
+	//cancelación de un evento
 	@RequestMapping("/cancelEvent")
 	public String cancelEvent(Model model, @RequestParam int id, @RequestParam(value="type", required=false) String type){
 		
@@ -138,6 +146,7 @@ public class PageController {
 		}
 	}
 	
+	//devuelve un evento para visualizarlo/editarlo
 	@RequestMapping("/event")
 	public String getEvent(@RequestParam(value="id", required=true) int id, @RequestParam(value="type", required=false) String type, Model model){
 		
@@ -153,6 +162,7 @@ public class PageController {
 		}
 	}
 	
+	//edita los datos de un evento
 	@RequestMapping("/editEvent")
 	public String editEvent(@RequestParam Map<String, String> params, @RequestParam("image") MultipartFile filePart){
 		
@@ -227,6 +237,7 @@ public class PageController {
 	    
 	}
 	
+	//modifica los datos de un usuario
 	@RequestMapping("/editUser")
 	public String editUser(Model model, @RequestParam Map<String, String> params, HttpSession session, @RequestParam(value="type", required=false) String type){
 		
@@ -308,6 +319,7 @@ public class PageController {
 		}
 	}
 	
+	//hace a un usuario inactivo en la plataforma
 	@RequestMapping("/deleteUser")
 	public String deleteUser(Model model, @RequestParam String email, @RequestParam(value="type", required=false) String type){
 		
@@ -335,6 +347,7 @@ public class PageController {
 		}	
 	}
 	
+	//devuelve la lista de usuarios que han creado un evento y por tanto son elegibles para una conversación
 	@RequestMapping("/availableChats")
 	public String showAvailableChats(Model model){
 		
@@ -354,6 +367,7 @@ public class PageController {
 		return "availableChats.jsp";
 	}
 	
+	//chat entre usuarios y administrador
 	@RequestMapping("/chat")
 	public String chat(HttpSession session, Model model, @RequestParam(value="type", required=false) String type, @RequestParam(value="userEmail", required=false) String userEmail, @RequestParam(required=false) String msg){
 		
@@ -402,6 +416,7 @@ public class PageController {
 		
 	}
 	
+	//realiza una búsqueda en los eventos y los usuarios
 	@RequestMapping("/search")
 	public String search(Model model, @RequestParam String search){
 		

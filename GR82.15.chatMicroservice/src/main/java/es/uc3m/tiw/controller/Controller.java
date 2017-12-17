@@ -21,11 +21,13 @@ public class Controller {
 	@Autowired
 	MessageDAO messageDAO;
 	
+	//guardar un nuevo mensaje
 	@RequestMapping(value="/chat", method=RequestMethod.POST)
 	public ResponseEntity<Message> saveMessage(@RequestBody Message message){
 		return new ResponseEntity<Message>(messageDAO.save(message), HttpStatus.OK);
 	}
 	
+	//obtener todos los mensajes de una conversacion
 	@RequestMapping(value="/chat", method=RequestMethod.GET)
 	public List<Message> getMessages(@RequestParam(required=true) String senderEmail, @RequestParam(required=true) String receiverEmail){
 		

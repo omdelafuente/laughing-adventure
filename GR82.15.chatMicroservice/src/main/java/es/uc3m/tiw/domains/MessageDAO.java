@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface MessageDAO extends CrudRepository<Message, Integer>{
 	
+	//obtener los mensajes de la conversacion entre dos usuarios
 	@Query("SELECT c FROM Message c WHERE (c.sender.email = :senderEmail AND c.receiver.email = :receiverEmail) OR (c.receiver.email = :senderEmail AND c.sender.email = :receiverEmail) ORDER BY c.date")
 	public List<Message> findConversation(@Param("senderEmail") String senderEmail, @Param("receiverEmail") String receiverEmail);
 

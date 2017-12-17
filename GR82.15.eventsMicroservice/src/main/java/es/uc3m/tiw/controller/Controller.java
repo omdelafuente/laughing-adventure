@@ -26,22 +26,29 @@ public class Controller {
 	@Autowired
 	PurchaseDAO purchaseDAO;
 	
+	//crear un evento
 	@RequestMapping(value="/event", method=RequestMethod.POST)
 	public Event createEvent(@RequestBody Event event){
 		return eventDAO.save(event);
 	}
 	
+	//obtener un evento por su id
 	@RequestMapping(value="/event/{id}", method=RequestMethod.GET)
 	public Event getEvent(@PathVariable int id){
 		return eventDAO.findById(id);
 	}
 	
+	//actualizar un evento con id
 	@RequestMapping(value="/event/{id}", method=RequestMethod.PUT)
 	public void editUser(@PathVariable int id, @RequestBody Event event){
 		event.setId(id);		
 		eventDAO.save(event);
 	}
 	
+	//conseguir una lista de eventos
+	//sin parametros -> todos los eventos
+	//con un string -> eventos que contegan el string en sus campos
+	//con varios parametros -> eventos que cumplan esos parametros
 	@RequestMapping(value="/event", method=RequestMethod.GET)
 	public List<Event> getEvents(
 			@RequestParam(value = "str", required = false) String str,
@@ -86,6 +93,7 @@ public class Controller {
 		 
 	}
 	
+	//crear una nueva compra de entrada
 	@RequestMapping(value="/purchase", method=RequestMethod.POST)
 	public ResponseEntity<Purchase> purchase(@RequestBody Purchase purchase){
 		
@@ -102,6 +110,9 @@ public class Controller {
 		return new ResponseEntity<Purchase>(purchaseDAO.save(purchase), HttpStatus.OK);
 	}
 	
+	//obtener una lista de entradas compradas
+	//parametro email -> lista de compras realizadas por el usuario con ese email
+	//parametro id -> lista de entradas compradas para ese evento
 	@RequestMapping(value="/purchase", method=RequestMethod.GET)
 	public List<Purchase> getPurchases(@RequestParam(required = false) String email, @RequestParam(required=false) Integer eventId){
 		

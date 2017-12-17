@@ -1,7 +1,6 @@
 package es.uc3m.tiw.controller;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +21,9 @@ public class Controller {
 	@Autowired
 	TransactionDAO transactionDAO;
 	
+	//crear una nueva transaccion
+	//200: transaccion realizada
+	//402: fallo al validar los datos de la tarjeta
 	@RequestMapping(value="/transaction", method=RequestMethod.POST)
 	public ResponseEntity<String> makeTransaction(@RequestBody Transaction transaction){
 		

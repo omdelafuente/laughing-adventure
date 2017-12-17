@@ -1,7 +1,6 @@
 package es.uc3m.tiw.domains;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class Usr implements Serializable{
 
